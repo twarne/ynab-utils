@@ -8,7 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,6 @@ import picocli.CommandLine.Command;
 @Command(name = "LoadAmazonTransactions")
 public class LoadAmazonTransactions implements Runnable {
 
-    private static final Predicate<Path> CSV_FILE_FILTER = p -> p.endsWith("csv");
 
     @Autowired
     private ShipmentRepository shipmentRepository;
@@ -37,8 +38,8 @@ public class LoadAmazonTransactions implements Runnable {
     @Autowired
     private RefundRepository refundRepository;
 
-    @Value("${reports.directory}")
-        private String reportsDirectory;
+    @Autowired
+    private ReportSource reportSource;
 
         @Value("${reports.archive}")
         private String archiveDirectory;
@@ -73,11 +74,13 @@ public class LoadAmazonTransactions implements Runnable {
     }
 
     private void processReports() throws IOException {
-        Path reportsDirectoryPath = Paths.get(reportsDirectory);
-        Files.list(reportsDirectoryPath).filter(CSV_FILE_FILTER).forEach(this::process);
+        Pair<ReportType, Path> reportPair = reportSource.get();
+        while(reportPair != null) {
+            process(reportPair.getLeft(), reportPair.getRight());
+        }
     }
 
-    private void process(Path reportPath) {
+    private void process(ReportType reportType, Path reportPath) {
         log.info(format("Processing report %s", reportPath.toString()));
     }
 
