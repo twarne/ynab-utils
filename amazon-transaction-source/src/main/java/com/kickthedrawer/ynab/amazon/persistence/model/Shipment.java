@@ -2,7 +2,10 @@ package com.kickthedrawer.ynab.amazon.persistence.model;
 
 import java.time.LocalDate;
 
+import com.kickthedrawer.ynab.amazon.helper.AmountConverter;
+import com.kickthedrawer.ynab.amazon.helper.LocalDateConverter;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +38,7 @@ public class Shipment extends ReportItem {
     @CsvBindByName(column = "Payment Instrument Type")
     private String paymentInstrumentType;
 
-    @CsvBindByName(column = "Shipment Date")
+    @CsvCustomBindByName(column = "Shipment Date", converter = LocalDateConverter.class)
     private LocalDate shipmentDate;
 
     @Column(nullable = true)
@@ -62,22 +65,22 @@ public class Shipment extends ReportItem {
     @CsvBindByName(column = "Shipping Address Zip")
     private String shippingAddressZip;
 
-    @CsvBindByName(column = "Shipping Charge")
+    @CsvCustomBindByName(column = "Shipping Charge", converter=AmountConverter.class)
     private float shippingCharge;
 
-    @CsvBindByName(column = "Subtotal")
+    @CsvCustomBindByName(column = "Subtotal", converter=AmountConverter.class)
     private float subtotal;
 
-    @CsvBindByName(column = "Tax Before Promotion")
+    @CsvCustomBindByName(column = "Tax Before Promotion", converter=AmountConverter.class)
     private float taxBeforePromotions;
 
-    @CsvBindByName(column = "Tax Charged")
+    @CsvCustomBindByName(column = "Tax Charged", converter=AmountConverter.class)
     private float taxCharged;
 
-    @CsvBindByName(column = "Total Charged")
+    @CsvCustomBindByName(column = "Total Charged", converter=AmountConverter.class)
     private float totalCharged;
 
-    @CsvBindByName(column = "Total Promotions")
+    @CsvCustomBindByName(column = "Total Promotions", converter=AmountConverter.class)
     private float totalPromotions;
 
 }

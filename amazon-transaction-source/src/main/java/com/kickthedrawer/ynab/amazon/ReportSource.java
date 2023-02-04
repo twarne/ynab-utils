@@ -23,7 +23,7 @@ import lombok.extern.java.Log;
 @Component
 @Log
 public class ReportSource implements Supplier<Pair<ReportType, Path>> {
-    private static final Predicate<Path> CSV_FILE_FILTER = p -> p.endsWith("csv");
+    private static final Predicate<Path> CSV_FILE_FILTER = p -> Files.isRegularFile(p) && p.getFileName().toString().endsWith("csv");
 
     private final static Map<String, ReportType> REPORT_TYPE_RESOLVER;
 
@@ -45,7 +45,12 @@ public class ReportSource implements Supplier<Pair<ReportType, Path>> {
             if (reports == null) {
                 try {
                     log.info(format("Initializing reports from %s", reportsDirectory));
-                    reports = Files.list(Paths.get(reportsDirectory)).filter(CSV_FILE_FILTER).iterator();
+                    reports = Files
+                            .list(Paths.get(reportsDirectory))
+                            .peek(p -> log
+                                    .info(format("Found report %s (regular file: %b; ends with: %b)", p.toString(),
+                                            Files.isRegularFile(p), p.getFileName().toString().endsWith("csv"))))
+                            .filter(CSV_FILE_FILTER).iterator();
                 } catch (IOException e) {
                     log.log(Level.WARNING,
                             format("Failed to load reports from %s: %s", reportsDirectory, e.getMessage()),

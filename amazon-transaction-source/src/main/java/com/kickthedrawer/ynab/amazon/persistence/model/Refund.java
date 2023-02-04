@@ -2,7 +2,10 @@ package com.kickthedrawer.ynab.amazon.persistence.model;
 
 import java.time.LocalDate;
 
+import com.kickthedrawer.ynab.amazon.helper.AmountConverter;
+import com.kickthedrawer.ynab.amazon.helper.LocalDateConverter;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,14 +24,14 @@ public class Refund extends LineItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @CsvBindByName(column = "Refund Amount")
+    @CsvCustomBindByName(column = "Refund Amount", converter=AmountConverter.class)
     private float refundAmount;
     @CsvBindByName(column = "Refund Condition")
     private String refundCondition;
-    @CsvBindByName(column = "Refund Date")
+    @CsvCustomBindByName(column = "Refund Date", converter = LocalDateConverter.class)
     private LocalDate refundDate;
     @CsvBindByName(column = "Refund Reason")
     private String refundReason;
-    @CsvBindByName(column = "Refund Tax Amount")
+    @CsvCustomBindByName(column = "Refund Tax Amount", converter=AmountConverter.class)
     private float refundTaxAmount;
 }

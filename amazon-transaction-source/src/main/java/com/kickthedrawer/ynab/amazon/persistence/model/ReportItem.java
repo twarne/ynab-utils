@@ -2,7 +2,9 @@ package com.kickthedrawer.ynab.amazon.persistence.model;
 
 import java.time.LocalDate;
 
+import com.kickthedrawer.ynab.amazon.helper.LocalDateConverter;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 
 import jakarta.persistence.Column;
 import lombok.Data;
@@ -18,7 +20,7 @@ public abstract class ReportItem {
     @CsvBindByName(column = "Group Name")
     private String groupName;
 
-    @CsvBindByName(column = "Order Date")
+    @CsvCustomBindByName(column = "Order Date", converter = LocalDateConverter.class)
     private LocalDate orderDate;
 
     @CsvBindByName(column = "Order ID")

@@ -2,7 +2,10 @@ package com.kickthedrawer.ynab.amazon.persistence.model;
 
 import java.time.LocalDate;
 
+import com.kickthedrawer.ynab.amazon.helper.AmountConverter;
+import com.kickthedrawer.ynab.amazon.helper.LocalDateConverter;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,16 +38,16 @@ public class Order extends LineItem {
     @CsvBindByName(column = "Exemption Opt-Out")
     private String exemptionOptOut;
 
-    @CsvBindByName(column = "Item Subtotal")
+    @CsvCustomBindByName(column = "Item Subtotal", converter=AmountConverter.class)
     private float itemSubtotal;
 
-    @CsvBindByName(column = "Item Subtotal Tax")
+    @CsvCustomBindByName(column = "Item Subtotal Tax", converter=AmountConverter.class)
     private float itemSubtotalTax;
 
-    @CsvBindByName(column = "Item Total")
+    @CsvCustomBindByName(column = "Item Total", converter=AmountConverter.class)
     private float itemTotal;
 
-    @CsvBindByName(column = "List Price Per Unit")
+    @CsvCustomBindByName(column = "List Price Per Unit", converter=AmountConverter.class)
     private float listPricePerUnit;
 
     @Column(nullable = true)
@@ -61,13 +64,13 @@ public class Order extends LineItem {
     @CsvBindByName(column = "PO Line Number")
     private String poLineNumber;
 
-    @CsvBindByName(column = "Purchase Price Per Unit")
+    @CsvCustomBindByName(column = "Purchase Price Per Unit", converter=AmountConverter.class)
     private float purchasePricePerUnit;
 
-    @CsvBindByName(column = "Release Date")
+    @CsvCustomBindByName(column = "Release Date", converter = LocalDateConverter.class)
     private LocalDate releaseDate;
 
-    @CsvBindByName(column = "Shipment Date")
+    @CsvCustomBindByName(column = "Shipment Date", converter = LocalDateConverter.class)
     private LocalDate shipmentDate;
 
     @Column(nullable = true)
