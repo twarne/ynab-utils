@@ -12,13 +12,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "refunds")
+@Table(name = "refunds", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "orderId", "refundDate", "refundAmount" }) })
 public class Refund extends LineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

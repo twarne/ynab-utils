@@ -13,13 +13,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name="shipments")
+@Table(name = "shipments", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "orderId", "carrierNameTrackingNumber" }) })
 public class Shipment extends ReportItem {
 
     @Id
@@ -65,22 +67,22 @@ public class Shipment extends ReportItem {
     @CsvBindByName(column = "Shipping Address Zip")
     private String shippingAddressZip;
 
-    @CsvCustomBindByName(column = "Shipping Charge", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Shipping Charge", converter = AmountConverter.class)
     private float shippingCharge;
 
-    @CsvCustomBindByName(column = "Subtotal", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Subtotal", converter = AmountConverter.class)
     private float subtotal;
 
-    @CsvCustomBindByName(column = "Tax Before Promotion", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Tax Before Promotion", converter = AmountConverter.class)
     private float taxBeforePromotions;
 
-    @CsvCustomBindByName(column = "Tax Charged", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Tax Charged", converter = AmountConverter.class)
     private float taxCharged;
 
-    @CsvCustomBindByName(column = "Total Charged", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Total Charged", converter = AmountConverter.class)
     private float totalCharged;
 
-    @CsvCustomBindByName(column = "Total Promotions", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Total Promotions", converter = AmountConverter.class)
     private float totalPromotions;
 
 }

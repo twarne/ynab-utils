@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.logging.Level;
 
@@ -51,11 +52,11 @@ public class LoadAmazonTransactions implements Runnable {
         log.info("Converting Amazon Order to Transactions");
         try {
             processReports();
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.log(Level.WARNING,
                     format("Error while processing reports: %s (%s)", e.getClass().getName(), e.getMessage()));
         }
-        
+
         logStats();
 
         log.info("Finished converting reports");
@@ -64,38 +65,48 @@ public class LoadAmazonTransactions implements Runnable {
     private void processReports() throws IOException {
         Pair<ReportType, Path> reportPair = reportSource.get();
         int reportCount = 0;
-        while(reportPair != null) {
+        while (reportPair != null) {
             reportCount++;
             process(reportPair.getLeft(), reportPair.getRight());
+            archive(reportPair.getRight());
             reportPair = reportSource.get();
         }
         log.info(format("Processed %d reports", reportCount));
     }
 
-    private void process(ReportType reportType, Path reportPath) throws IOException{
+    private void process(ReportType reportType, Path reportPath) throws IOException {
         log.info(format("Processing report (%s) %s", reportType, reportPath.toString()));
-        try(Reader reader = Files.newBufferedReader(reportPath)) {
-            CsvToBean<ReportItem> beanProcessor = new CsvToBeanBuilder<ReportItem>(reader).withType(reportType.getType()).build();
+        try (Reader reader = Files.newBufferedReader(reportPath)) {
+            CsvToBean<ReportItem> beanProcessor = new CsvToBeanBuilder<ReportItem>(reader)
+                    .withType(reportType.getType()).build();
             Iterator<ReportItem> itemIterator = beanProcessor.iterator();
             ReportItem item = null;
-            while(itemIterator.hasNext()) {
+            while (itemIterator.hasNext()) {
                 item = itemIterator.next();
-                saveItem(item);
+                try {
+                    saveItem(item);
+                } catch (Exception e) {
+                    log.log(Level.WARNING, format("Failed to save item %s: %s (%s)", item.getOrderId(),
+                            e.getClass().getName(), e.getMessage()));
+                }
             }
+        } catch (Exception e) {
+            log.log(Level.WARNING, format("Failed to process report %s: %s (%s)", reportPath.getFileName(),
+                    e.getClass().getName(), e.getMessage()), e);
         }
     }
 
     private void saveItem(ReportItem item) {
-        if(item instanceof Order) {
+        if (item instanceof Order) {
             log.info(format("Saving order %s", item.getOrderId()));
-            orderRepository.save((Order)item);
-        } else if(item instanceof Shipment) {
+            orderRepository.save((Order) item);
+        } else if (item instanceof Shipment) {
             log.info(format("Saving shipment %s", item.getOrderId()));
-            shipmentRepository.save((Shipment)item);
-        } else if(item instanceof Refund) {
+            shipmentRepository.save((Shipment) item);
+        } else if (item instanceof Refund) {
             log.info(format("Saving refund %s", item.getOrderId()));
-            refundRepository.save((Refund)item);
-        } else if(item == null) {
+            refundRepository.save((Refund) item);
+        } else if (item == null) {
             log.warning(format("Attempt to save null item"));
         } else {
             log.severe(format("Unknown item type: %s", item.getClass().getName()));
@@ -106,6 +117,12 @@ public class LoadAmazonTransactions implements Runnable {
         log.info(format("Now there are %d shipments in the db", shipmentRepository.count()));
         log.info(format("Now there are %d refunds in the db", refundRepository.count()));
         log.info(format("Now there are %d orders in the db", orderRepository.count()));
+    }
+
+    private void archive(Path reportPath) throws IOException {
+        Path archivePath = Paths.get(archiveDirectory).resolve(reportPath.getFileName());
+        log.info(format("Archiving report %s to %s", reportPath.getFileName().toString(), archivePath.toString()));
+        Files.move(reportPath, archivePath);
     }
 
 }

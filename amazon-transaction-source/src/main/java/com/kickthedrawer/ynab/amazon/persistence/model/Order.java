@@ -13,13 +13,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name="orders")
+@Table(name = "orders", uniqueConstraints = { @UniqueConstraint(columnNames = { "orderId", "unspscCode" }) })
 public class Order extends LineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,16 +39,16 @@ public class Order extends LineItem {
     @CsvBindByName(column = "Exemption Opt-Out")
     private String exemptionOptOut;
 
-    @CsvCustomBindByName(column = "Item Subtotal", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Item Subtotal", converter = AmountConverter.class)
     private float itemSubtotal;
 
-    @CsvCustomBindByName(column = "Item Subtotal Tax", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Item Subtotal Tax", converter = AmountConverter.class)
     private float itemSubtotalTax;
 
-    @CsvCustomBindByName(column = "Item Total", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Item Total", converter = AmountConverter.class)
     private float itemTotal;
 
-    @CsvCustomBindByName(column = "List Price Per Unit", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "List Price Per Unit", converter = AmountConverter.class)
     private float listPricePerUnit;
 
     @Column(nullable = true)
@@ -64,7 +65,7 @@ public class Order extends LineItem {
     @CsvBindByName(column = "PO Line Number")
     private String poLineNumber;
 
-    @CsvCustomBindByName(column = "Purchase Price Per Unit", converter=AmountConverter.class)
+    @CsvCustomBindByName(column = "Purchase Price Per Unit", converter = AmountConverter.class)
     private float purchasePricePerUnit;
 
     @CsvCustomBindByName(column = "Release Date", converter = LocalDateConverter.class)

@@ -7,8 +7,10 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
+@MappedSuperclass
 @Data
 public abstract class ReportItem {
 
@@ -32,7 +34,4 @@ public abstract class ReportItem {
 
     @CsvBindByName(column = "Website")
     private String website;
-
-    @Column(unique = true)
-    private String itemHash;
 }

@@ -3,9 +3,11 @@ package com.kickthedrawer.ynab.amazon.persistence.model;
 import com.opencsv.bean.CsvBindByName;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@MappedSuperclass
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class LineItem extends ReportItem {
