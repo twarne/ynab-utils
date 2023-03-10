@@ -22,10 +22,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "orders", uniqueConstraints = { @UniqueConstraint(columnNames = { "orderId", "unspscCode" }) })
 public class Order extends LineItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
     @Column(nullable = true)
     @CsvBindByName(column = "Carrier Name & Tracking Number")
     private String carrierNameTrackingNumber;

@@ -22,10 +22,6 @@ import lombok.EqualsAndHashCode;
 @Table(name = "refunds", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "orderId", "refundDate", "refundAmount" }) })
 public class Refund extends LineItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
     @CsvCustomBindByName(column = "Refund Amount", converter=AmountConverter.class)
     private float refundAmount;
     @CsvBindByName(column = "Refund Condition")

@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.kickthedrawer.ynab.amazon.LoadAmazonTransactions;
+import com.kickthedrawer.ynab.converter.ConvertAmazonTransactions;
 
 import lombok.extern.java.Log;
 import picocli.CommandLine;
@@ -17,12 +18,15 @@ public class YnabUtilsApplication implements CommandLineRunner, ExitCodeGenerato
 	private int exitCode;
 
 	@Autowired
-	private LoadAmazonTransactions amazonTransactions;
+	private LoadAmazonTransactions loadAmazonTransactions;
+
+	@Autowired
+	private ConvertAmazonTransactions convertAmazonTransactions;
 
 	@Override
 	public void run(String... args) throws Exception {
 		log.info("Starting application run");
-		CommandLine commandLine = new CommandLine(amazonTransactions);
+		CommandLine commandLine = new CommandLine(convertAmazonTransactions);
 		exitCode = commandLine.execute(args);
 	}
 

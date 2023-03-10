@@ -24,9 +24,6 @@ import lombok.EqualsAndHashCode;
         @UniqueConstraint(columnNames = { "orderId", "carrierNameTrackingNumber" }) })
 public class Shipment extends ReportItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
 
     @CsvBindByName(column = "Carrier Name & Tracking Number")
     private String carrierNameTrackingNumber;
